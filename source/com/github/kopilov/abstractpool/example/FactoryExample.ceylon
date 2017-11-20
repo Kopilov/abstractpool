@@ -1,4 +1,4 @@
-import com.github.kopilov.dynamicpool {
+import com.github.kopilov.abstractpool {
     ResourceFactory
 }
 class FactoryExample() satisfies ResourceFactory<ResourceExample> {

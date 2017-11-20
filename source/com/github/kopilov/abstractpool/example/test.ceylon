@@ -1,4 +1,4 @@
-import com.github.kopilov.dynamicpool {
+import com.github.kopilov.abstractpool {
     Pool
 }
 import java.util.concurrent {
