@@ -1,5 +1,5 @@
 import java.util.concurrent {
-    ConcurrentHashMap
+    LinkedBlockingQueue
 }
 import ceylon.time {
     Clock,
@@ -22,27 +22,21 @@ shared class Pool<out Resource> (
         given Resource satisfies PooledResource
         {
 
-    value freeResources = ConcurrentHashMap<Integer,Resource>();
-    value usedResources = ConcurrentHashMap<Integer,Resource>();
+    value freeResources = LinkedBlockingQueue<Resource>();
     variable Boolean isCleaning = false;
 
     Resource generateResource() {
         Resource resource = factory.createResource();
         void obtainResource() {
-            Integer key = resource.hash;
-            freeResources.remove(key);
-            usedResources.put(key, resource);
         }
         void releaseResource() {
-            Integer key = resource.hash;
-            freeResources.put(key, resource);
-            usedResources.remove(key);
+            freeResources.put(resource);
             if (!isCleaning) {
                 Thread(cleanResources).start();
             }
         }
-        resource.obtainToPool = obtainResource;
-        resource.releaseFromPool = releaseResource;
+        resource.obtainFromPool = obtainResource;
+        resource.releaseToPool = releaseResource;
         return resource;
     }
 
@@ -50,7 +44,7 @@ shared class Pool<out Resource> (
         if (freeResources.empty || isCleaning) {
             return generateResource();
         } else {
-            return freeResources.values().iterator().next();
+            return freeResources.take();
         }
     }
 
@@ -58,17 +52,20 @@ shared class Pool<out Resource> (
         isCleaning = true;
         Clock cleandAt = systemTime;
         value oldResources = ArrayList<PooledResource>();
-        for (PooledResource resource in freeResources.values()) {
+        Integer size = freeResources.size();
+        for (Integer i in 1..size) {
+            value resource = freeResources.take();
             if ((cleandAt.milliseconds() - resource.lastUsage) / 1000.0 > expirationTime) {
                 oldResources.add(resource);
+            } else {
+                freeResources.put(resource);
             }
         }
         for (PooledResource resource in oldResources) {
-            freeResources.remove(resource.hash);
             resource.close();
         }
         isCleaning = false;
     }
 
-    shared Integer size => freeResources.size() + usedResources.size();
+    shared Integer size => freeResources.size();
 }

@@ -7,15 +7,15 @@ shared abstract class PooledResource() satisfies Obtainable {
 
     variable Integer usedAt = systemTime.milliseconds();
 
-    shared variable Anything() obtainToPool = (){throw Exception("Replace this executable with actual inside some pool");};
-    shared variable Anything() releaseFromPool = (){throw Exception("Replace this executable with actual inside some pool");};
+    shared variable Anything() obtainFromPool = (){throw Exception("Replace this executable with actual inside some pool");};
+    shared variable Anything() releaseToPool = (){throw Exception("Replace this executable with actual inside some pool");};
 
     shared actual default void obtain() {
-        obtainToPool();
+        obtainFromPool();
     }
     shared actual default void release(Throwable? error) {
         usedAt = systemTime.milliseconds();
-        releaseFromPool();
+        releaseToPool();
     }
 
     shared Integer lastUsage => usedAt;

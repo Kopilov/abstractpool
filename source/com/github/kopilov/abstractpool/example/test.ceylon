@@ -17,11 +17,11 @@ shared void run() {
 
     ExecutorService threadPool = Executors.newCachedThreadPool();
 
-    for (i in 1..5) {
+    for (i in 1..100) {
         void task() {
             try (r = pool.getResource()) {
                 print("start");
-                r.calculateAndPrint(1000);
+                r.calculateAndPrint(10, i);
             }
         }
         threadPool.execute(task);
@@ -35,12 +35,12 @@ shared void run() {
     Thread.sleep(10 * 1000);
     print(pool.size);
 
-    ExecutorService threadPool2 = Executors.newFixedThreadPool(2);
-    for (i in 1..5) {
+    ExecutorService threadPool2 = Executors.newFixedThreadPool(8);
+    for (i in 1..5000) {
         void task() {
             try (r = pool.getResource()) {
                 print("start");
-                r.calculateAndPrint(1000);
+                r.calculateAndPrint(10, i);
             }
         }
         threadPool2.execute(task);
