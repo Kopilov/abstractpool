@@ -9,48 +9,33 @@ import java.lang {
     Thread
 }
 shared void run() {
-//    value resource = ResourceExample();
-//    resource.calculateAndPrint(2000);
 
     FactoryExample fe = FactoryExample();
-    value pool = Pool<ResourceExample>(fe, 5.0);
+    Float expirationTime = 5.0;
+    value pool = Pool<ResourceExample>(fe, expirationTime);
 
-    ExecutorService threadPool = Executors.newCachedThreadPool();
-
-    for (i in 1..100) {
-        void task() {
-            try (r = pool.getResource()) {
-                print("start");
-                r.calculateAndPrint(10, i);
-            }
-        }
-        threadPool.execute(task);
-    }
-    print(pool.size);
-    threadPool.shutdown();
-    while(!threadPool.terminated) {
-        Thread.sleep(10);
-    }
-    print(pool.size);
-    Thread.sleep(10 * 1000);
-    print(pool.size);
-
-    ExecutorService threadPool2 = Executors.newFixedThreadPool(8);
+    ExecutorService executor = Executors.newFixedThreadPool(8);
     for (i in 1..5000) {
         void task() {
             try (r = pool.getResource()) {
-                print("start");
+                print("getResource");
                 r.calculateAndPrint(10, i);
             }
         }
-        threadPool2.execute(task);
+        executor.execute(task);
     }
-    print(pool.size);
-    threadPool2.shutdown();
-    while(!threadPool2.terminated) {
+    print("size 1 = ``pool.size``");
+    executor.shutdown();
+    while(!executor.terminated) {
         Thread.sleep(10);
     }
-    print(pool.size);
+    print("size 2 = ``pool.size``");
     Thread.sleep(10 * 1000);
-    print(pool.size);
+    print("size 3 = ``pool.size``");
+    try (r = pool.getResource()) {
+        print("getResource");
+        r.calculateAndPrint(10, 0);
+    }
+    Thread.sleep(1000);
+    print("size 4 = ``pool.size``");
 }

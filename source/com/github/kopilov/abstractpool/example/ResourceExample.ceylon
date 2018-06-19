@@ -18,7 +18,7 @@ class ResourceExample() extends PooledResource() {
             for (j in 1..a) {
                 for (k in 1..a) {
                     if (i == a && j == a && k == a) {
-                        print ("Everything is ``a``");
+                        print("Everything is ``a``");
                         print("i = ``id``, d = ``d``");
                     }
                 }
