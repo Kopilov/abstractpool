@@ -1,7 +1,7 @@
 import com.github.kopilov.abstractpool {
     PooledResource
 }
-class ResourceExample() extends PooledResource() {
+class ResourceExample(Integer resourceId) extends PooledResource(resourceId) {
     variable String d = "";
 
     shared actual void obtain() {

@@ -1,11 +1,12 @@
 import ceylon.time {
+    Instant,
     systemTime
 }
 "This class should be extended with any elements and methods
  that should be kept in the [[Pool]]."
-shared abstract class PooledResource() satisfies Obtainable {
+shared abstract class PooledResource(shared Integer id) satisfies Obtainable {
 
-    variable Integer usedAt = systemTime.milliseconds();
+    variable Instant usedAt = systemTime.instant();
 
     shared variable Anything() obtainFromPool = (){throw Exception("Replace this executable with actual inside some pool");};
     shared variable Anything() releaseToPool = (){throw Exception("Replace this executable with actual inside some pool");};
@@ -14,11 +15,11 @@ shared abstract class PooledResource() satisfies Obtainable {
         obtainFromPool();
     }
     shared actual default void release(Throwable? error) {
-        usedAt = systemTime.milliseconds();
+        usedAt = systemTime.instant();
         releaseToPool();
     }
 
-    shared Integer lastUsage => usedAt;
+    shared Instant lastUsage => usedAt;
 
     shared formal void close();
 }

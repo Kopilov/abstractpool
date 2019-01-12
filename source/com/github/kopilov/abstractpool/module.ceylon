@@ -102,11 +102,10 @@
    **size 3** can be little bigger than **size 2** if some resources released during pause 1.
    - **size 4** should be 1 because all other resource had been expirated during pause 1 and pool cleared during pause 2.
    [[Pool]] cleans itself when it is used (resources are obtained and released, usually with try-with-resource) as before pause 2.
-   Also you can call [[Pool.cleanResources]] manually.
    """
 
 native ("jvm")
-module com.github.kopilov.abstractpool "1.1.0" {
+module com.github.kopilov.abstractpool "1.2.0" {
     import java.base "8";
     shared import ceylon.time "1.3.3";
     import ceylon.collection "1.3.3";
