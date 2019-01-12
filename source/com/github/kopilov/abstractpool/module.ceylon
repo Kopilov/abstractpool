@@ -10,9 +10,9 @@
             ResourceFactory
         }
         class FactoryExample() satisfies ResourceFactory<ResourceExample> {
-            shared actual ResourceExample createResource() {
+            shared actual ResourceExample createResource(Integer resourceId) {
                 print ("createResource");
-                return ResourceExample();
+                return ResourceExample(resourceId);
             }
         }
 
@@ -21,7 +21,7 @@
         import com.github.kopilov.abstractpool {
             PooledResource
         }
-        class ResourceExample() extends PooledResource() {
+        class ResourceExample(Integer resourceId) extends PooledResource() {
             variable String d = "";
 
             shared actual void obtain() {
@@ -84,23 +84,17 @@
                 Thread.sleep(10);
             }
             print("size 2 = ``pool.size``");
-            Thread.sleep(10 * 1000); //pause 1
+            //Pause for expiration. Note: pool.expirationTime is shorter.
+            Thread.sleep(10 * 1000);
             print("size 3 = ``pool.size``");
-            try (r = pool.getResource()) {
-                print("getResource");
-                r.calculateAndPrint(10, 0);
-            }
-            Thread.sleep(1000); //pause 2
-            print("size 4 = ``pool.size``");
         }
 
    Some important things that we can notice in the output:
-   - **getResource** is printed definitely 5001 time;
-   - **createResource** is printed about 4700-4800 times because resources are reused;
-   - **size 1** is zero or about zero because all tasks are just started and pool has no free resources;
-   - **size 2** and **size 3** are about 4700-4800 because all created resource are returned to the pool.
-   **size 3** can be little bigger than **size 2** if some resources released during pause 1.
-   - **size 4** should be 1 because all other resource had been expirated during pause 1 and pool cleared during pause 2.
+   - **getResource** is printed definitely 5000 times (the same as pool.getResource() invocations);
+   - **createResource** should be printed 8 times (or about — the same as number of threads);
+   - **size 1** is usually zero because all tasks are just started and pool has no free resources;
+   - **size 2** is 8 (or about) because all created resource are returned to the pool.
+   - **size 3** should be 0 because all resources had been expirated and autoremoved during pause.
    [[Pool]] cleans itself when it is used (resources are obtained and released, usually with try-with-resource) as before pause 2.
    """
 

@@ -19,7 +19,7 @@ shared void run() {
         void task() {
             try (r = pool.getResource()) {
                 print("getResource");
-                r.calculateAndPrint(10, i);
+                r.calculateAndPrint(100, i);
             }
         }
         executor.execute(task);
@@ -32,10 +32,4 @@ shared void run() {
     print("size 2 = ``pool.size``");
     Thread.sleep(10 * 1000);
     print("size 3 = ``pool.size``");
-    try (r = pool.getResource()) {
-        print("getResource");
-        r.calculateAndPrint(10, 0);
-    }
-    Thread.sleep(1000);
-    print("size 4 = ``pool.size``");
 }
