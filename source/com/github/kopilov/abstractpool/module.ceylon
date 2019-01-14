@@ -95,7 +95,7 @@
    - **size 1** is usually zero because all tasks are just started and pool has no free resources;
    - **size 2** is 8 (or about) because all created resource are returned to the pool.
    - **size 3** should be 0 because all resources had been expirated and autoremoved during pause.
-   [[Pool]] cleans itself when it is used (resources are obtained and released, usually with try-with-resource) as before pause 2.
+   [[Pool]] cleans itself when it is used (resources are obtained and released, usually with try-with-resource) as during pause.
    """
 
 native ("jvm")
